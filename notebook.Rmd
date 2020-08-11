@@ -1,0 +1,158 @@
+---
+title: VCS popularity in open source projects
+---
+
+While preparing a course about version control and Git,
+I wanted to know about the adoption of Version Control Systems (VCS) in well-known open source projects over time.
+
+Gathering the data
+------------------
+
+As I could not find such data online, I gathered it manually.
+Please note that the data likely contains mistakes as the process is tedious and error-prone —
+feel free to contribute via [issues]/[PRs] if you find any error or want to add data about some project.
+
+Only few projects have documented their successive VCS migrations — good examples
+of well-documented projects are Python (cf. [PEP 347], [PEP 385], [PEP 512])
+and Linux (cf. [A Short History of Git]).
+
+I gathered data manually about most other projects by doing some archeology in their commit history,
+their release notes and their dev/commit mailing lists.
+If you ever need to do such archeology, I found these hints especially useful:
+
+- History of VCS-specific files (*e.g.*, `.gitignore`, `.bzrignore`, `.cvsignore`).
+  Note that reading commit messages is very important about these files, as some of them have a shared commit history across several VCS (*e.g.*, `.bzrignore` file moved to `.gitignore`).
+- Commit format. Migrations from SVN to git via `git-svn` seems to add `git-svn` info in commits.
+  Migrations from `RCS` seems to add `Entering into RCS` commits.
+- Migrations from a distributed VCS to git are harder to detect.
+  I dated most of these thanks to the project documentation/news/dev mailing lists (e.g., [GCC's Moving to Git]).
+
+Visualization
+-------------
+
+Visualization scripts to reproduce this analysis are available on the [vcs-popularity repository].
+Here is a raw view of the gathered data.
+
+```{r, message=FALSE, echo=FALSE, fig.width=10, fig.height=15}
+library(tidyverse)
+library(viridis)
+
+theme_set(theme_bw())
+
+# seed selected such that lines close to each other are easy to distinguish
+set.seed(4)
+vcs_colors = sample(viridis_pal(end=0.9)(7))
+vcs_colors_with_none = append(vcs_colors, "#DDDDDDFF", after=5)
+
+usage = read_csv('./vcs-usage-oss.csv') %>%
+    mutate(begin=as.integer(begin), end=as.integer(end))
+
+y_coords = usage %>%
+    group_by(project) %>% summarize(birth=min(begin)) %>%
+    arrange(-birth)
+y_coords$y = seq(from=0, to=nrow(y_coords)-1)
+y_coords = y_coords %>% mutate(y = y + 0.5 * as.integer(y / 10))
+
+bar_height=0.8
+inner_join(usage, y_coords) %>%
+    ggplot(aes(xmin=begin, xmax=end,
+               ymin=y-(bar_height/2), ymax=y+(bar_height/2),
+               fill=vcs)) +
+    geom_rect() +
+    scale_fill_manual(values=vcs_colors_with_none) +
+    scale_y_continuous(breaks=y_coords$y,
+                       labels=y_coords$project,
+                       minor_breaks=NULL,
+                       position="right",
+                       expand=c(0.01,0.01)) +
+    scale_x_continuous(expand=c(0.01,0.01)) +
+    theme(legend.position="top")
+```
+
+Here is the number of projects using each VCS over time.
+
+```{r, message=FALSE, echo=FALSE, fig.width=10, fig.height=5}
+usage_per_year = usage %>%
+    filter(vcs != "none") %>%
+    arrange(project, begin) %>%
+    rowwise() %>%
+    mutate(year=paste(seq(from=begin, to=end), collapse=',')) %>%
+    separate_rows(year, sep=',')
+
+vcs_type = tribble(~vcs, ~vcs_type,
+    "RCS", "local",
+    "CVS", "centralized",
+    "BitKeeper", "decentralized",
+    "Subversion", "centralized",
+    "Git", "decentralized",
+    "Mercurial", "decentralized",
+    "Bazaar", "decentralized"
+)
+
+proportion_usage = inner_join(
+    usage_per_year %>% group_by(year) %>% summarize(nb_projects=n()) %>% ungroup(),
+    usage_per_year %>% group_by(vcs, year) %>% summarize(nb_projects_per_vcs=n()) %>% ungroup()
+) %>%
+    mutate(vcs_proportion = nb_projects_per_vcs / nb_projects) %>%
+    mutate(year = as.Date(ISOdate(year, 1, 1))) %>%
+    inner_join(vcs_type)
+
+proportion_usage %>%
+    ggplot(aes(x=year, y=nb_projects_per_vcs, color=vcs, group=vcs, linetype=vcs_type)) +
+    geom_line() +
+    scale_linetype_manual(values=c("longdash", "solid", "dotted")) +
+    scale_color_manual(values=vcs_colors) +
+    labs(x="Year", y="Number of projects")
+```
+
+And finally, this is the proportion of projects using each VCS over time.
+
+```{r, message=FALSE, echo=FALSE, fig.width=10, fig.height=5}
+proportion_usage %>%
+    ggplot(aes(x=year, y=vcs_proportion, color=vcs, group=vcs, linetype=vcs_type)) +
+    geom_line() +
+    scale_linetype_manual(values=c("longdash", "solid", "dotted")) +
+    scale_color_manual(values=vcs_colors) +
+    scale_y_continuous(labels = scales::percent) +
+    labs(x="Year", y="Proportion of projects")
+```
+
+Conclusion
+----------
+
+As expected, Git is the ultra-dominant VCS today.
+Git is the default VCS choice for most projects since 2008, and most older projects have switched to Git as of 2020.
+
+This popularity is unlikely to decline soon, as most accessible online services to host projects only support Git now.
+
+- Several VCS can be used on SourceForge but most users fled from it since [SourceForge's 2013-2015 adware/malware shenanigans].
+- Several VCS could be used on Google Code, but [Google Code closed in 2016].
+- GitHub is by far the most popular today, and only proposes the Git VCS.
+- GitLab's popularity increases, and also only proposes the Git VCS.
+  Moreover, GitLab is unlikely to vanish overnight since it is open source and quite simple to deploy on your own infrastructure.
+- Even if Bitbucket only proposed the Mercurial VCS when it started in 2008, Git was introduced in 2011 and became so popular on the platform that [Bitbucket only proposes Git since July 2020].
+
+Finally, the rise of continuous integration and DevOps methodologies promote VCS that integrate well with these practices — where Git seems to be one step ahead.
+
+- GitLab is very convenient for such practice, as Gitlab CI is convenient for developers (clean syntax, controllable software environment, pleasant interface) and for administrators (versatile architecture).
+  GitLab also has a Kubernetes integration.
+- Popular external CI services are limited to Git, such as Travis or Circle CI — both can be plugged to either GitHub or Bitbucket, but these two platforms only support the Git VCS as of 2020.
+- CI practice can of course be used on non-Git VCS.
+  For example, Firefox uses continous integration with a Mercurial VCS,
+  but this required Firefox developers to build their own CI stack (cf. [Firefox's CI practice], [Taskcluster]).
+  Plugging any VCS to a dedicated test infrastructure (*e.g.*, Jenkins) is also possible.
+  However, the lack of free online services to host the CI for non-Git projects makes it impractical for small/new projects, that do not have their own infrastructure nor the manpower to develop their own CI technology.
+
+[PEP 347]: https://www.python.org/dev/peps/pep-0347/
+[PEP 385]: https://www.python.org/dev/peps/pep-0385/
+[PEP 512]: https://www.python.org/dev/peps/pep-0512/
+[A Short History of Git]: https://git-scm.com/book/en/v2/Getting-Started-A-Short-History-of-Git
+[GCC's Moving to Git]: https://gcc.gnu.org/wiki/GitConversion
+[vcs-popularity repository]: https://github.com/mpoquet/vcs-popularity
+[issues]: https://github.com/mpoquet/vcs-popularity/issues
+[PRs]: https://github.com/mpoquet/vcs-popularity/pulls
+[SourceForge's 2013-2015 adware/malware shenanigans]: https://en.wikipedia.org/wiki/SourceForge#Controversies
+[Google Code closed in 2016]: https://opensource.googleblog.com/2015/03/farewell-to-google-code.html
+[Bitbucket only proposes Git since July 2020]: https://bitbucket.org/blog/sunsetting-mercurial-support-in-bitbucket
+[Firefox's CI practice]: https://developer.mozilla.org/en-US/docs/Mozilla/Continuous_integration
+[Taskcluster]: https://docs.taskcluster.net/docs
