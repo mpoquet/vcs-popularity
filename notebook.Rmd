@@ -98,9 +98,8 @@ proportion_usage = inner_join(
     inner_join(vcs_type)
 
 proportion_usage %>%
-    ggplot(aes(x=year, y=nb_projects_per_vcs, color=vcs, group=vcs, linetype=vcs_type)) +
+    ggplot(aes(x=year, y=nb_projects_per_vcs, color=vcs, group=vcs, linetype=vcs)) +
     geom_line() +
-    scale_linetype_manual(values=c("longdash", "solid", "dotted")) +
     scale_color_manual(values=vcs_colors) +
     labs(x="Year", y="Number of projects")
 ```
@@ -109,9 +108,8 @@ And finally, this is the proportion of projects using each VCS over time.
 
 ```{r, message=FALSE, echo=FALSE, fig.width=10, fig.height=5}
 proportion_usage %>%
-    ggplot(aes(x=year, y=vcs_proportion, color=vcs, group=vcs, linetype=vcs_type)) +
+    ggplot(aes(x=year, y=vcs_proportion, color=vcs, group=vcs, linetype=vcs)) +
     geom_line() +
-    scale_linetype_manual(values=c("longdash", "solid", "dotted")) +
     scale_color_manual(values=vcs_colors) +
     scale_y_continuous(labels = scales::percent) +
     labs(x="Year", y="Proportion of projects")
