@@ -1,0 +1,102 @@
+domain,project,vcs,begin,end
+os,linux,none,1991,2002
+os,linux,BitKeeper,2002,2005
+os,linux,Git,2005,2020
+os,android,Git,2008,2020
+os,openbsd,CVS,1996,2020
+libc,glibc,none,1987,1995
+libc,glibc,CVS,1995,2009
+libc,glibc,Git,2009,2020
+libc,musl,Git,2011,2020
+hardware,riscv,Git,2018,2020
+lang,python,CVS,1991,2004
+lang,python,Subversion,2004,2009
+lang,python,Mercurial,2009,2017
+lang,python,Git,2017,2020
+lang,php,CVS,1995,2009
+lang,php,Subversion,2009,2012
+lang,php,Git,2012,2020
+lang,go,Git,2008,2020
+lang,rust,Git,2010,2020
+compil,gcc,none,1987,1988
+compil,gcc,RCS,1988,1997
+compil,gcc,CVS,1997,2005
+compil,gcc,Subversion,2005,2019
+compil,gcc,Git,2019,2020
+compil,llvm,Subversion,2002,2019
+compil,llvm,Git,2019,2020
+secu,gnupg,CVS,1997,2005
+secu,gnupg,Subversion,2005,2010
+secu,gnupg,Git,2010,2020
+secu,openssl,CVS,2000,2013
+secu,openssl,Git,2013,2020
+web server,apache,CVS,1996,2004
+web server,apache,Subversion,2004,2020
+web server,nginx,Subversion,2004,2013
+web server,nginx,Mercurial,2013,2020
+web server,lighttpd,Subversion,2003,2008
+web server,lighttpd,Bazaar,2008,2009
+web server,lighttpd,Git,2009,2020
+web server,tomcat,CVS,1996,2006
+web server,tomcat,Subversion,2006,2019
+web server,tomcat,Git,2019,2020
+database,postgresql,CVS,1996,2010
+database,postgresql,Git,2010,2020
+database,mysql,CVS,1995,2000
+database,mysql,BitKeeper,2000,2008
+database,mysql,Bazaar,2008,2014
+database,mysql,Git,2014,2020
+web,mediawiki,CVS,2002,2006
+web,mediawiki,Subversion,2006,2012
+web,mediawiki,Git,2012,2020
+web,angularjs,Git,2010,2020
+web,react,Git,2013,2020
+web,jquery,Git,2006,2020
+web,nodejs,Git,2009,2020
+web,wordpress,CVS,2003,2006
+web,wordpress,Subversion,2006,2020
+browser,firefox,CVS,2002,2008
+browser,firefox,Mercurial,2008,2020
+browser,chromium,Subversion,2008,2009
+browser,chromium,Git,2009,2020
+editor,emacs,none,1976,1985
+editor,emacs,RCS,1985,2000
+editor,emacs,CVS,2000,2010
+editor,emacs,Git,2010,2020
+editor,vim,CVS,1991,2010
+editor,vim,Mercurial,2010,2016
+editor,vim,Git,2016,2020
+editor,vscode,Git,2015,2020
+editor,atom,Git,2011,2020
+cloud,ceph,Git,2007,2020
+cloud,openstack,Git,2010,2020
+cloud,opennebula,Subversion,2008,2010
+cloud,opennebula,Git,2010,2020
+bigdata,hadoop,Subversion,2006,2014
+bigdata,hadoop,Git,2014,2020
+bigdata,spark,Git,2010,2020
+bigdata,redis,Git,2009,2020
+bigdata,cassandra,Subversion,2008,2012
+bigdata,cassandra,Git,2012,2020
+bigdata,mongodb,Git,2007,2020
+container,docker,Git,2013,2020
+container,kubernetes,Git,2014,2020
+container,lxc,Git,2009,2020
+learning,tensorflow,Git,2015,2020
+office,libreoffice,Git,2011,2020
+multimedia,gimp,CVS,1996,2005
+multimedia,gimp,Subversion,2005,2009
+multimedia,gimp,Git,2009,2020
+multimedia,inkscape,CVS,2003,2007
+multimedia,inkscape,Subversion,2007,2008
+multimedia,inkscape,Bazaar,2008,2017
+multimedia,inkscape,Git,2017,2020
+multimedia,blender,CVS,2002,2009
+multimedia,blender,Subversion,2009,2013
+multimedia,blender,Git,2013,2020
+multimedia,audacity,CVS,2000,2006
+multimedia,audacity,Subversion,2006,2015
+multimedia,audacity,Git,2015,2020
+multimedia,vlc,CVS,2001,2005
+multimedia,vlc,Subversion,2005,2008
+multimedia,vlc,Git,2008,2020
