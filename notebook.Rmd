@@ -33,7 +33,7 @@ Visualization
 Visualization scripts to reproduce this analysis are available on the [vcs-popularity repository].
 Here is a raw view of the gathered data.
 
-```{r, message=FALSE, echo=FALSE, fig.width=10, fig.height=15}
+```{r, message=FALSE, echo=FALSE, fig.width=10, fig.height=8}
 library(tidyverse)
 library(viridis)
 
@@ -51,7 +51,7 @@ y_coords = usage %>%
     group_by(project) %>% summarize(birth=min(begin)) %>%
     arrange(-birth)
 y_coords$y = seq(from=0, to=nrow(y_coords)-1)
-y_coords = y_coords %>% mutate(y = y + 0.5 * as.integer(y / 10))
+# y_coords = y_coords %>% mutate(y = y + 0.5 * as.integer(y / 10))
 
 bar_height=0.8
 inner_join(usage, y_coords) %>%
@@ -104,6 +104,7 @@ proportion_usage %>%
     labs(x="Year", y="Number of projects")
 ```
 
+<!--
 And finally, this is the proportion of projects using each VCS over time.
 
 ```{r, message=FALSE, echo=FALSE, fig.width=10, fig.height=5}
@@ -114,6 +115,7 @@ proportion_usage %>%
     scale_y_continuous(labels = scales::percent) +
     labs(x="Year", y="Proportion of projects")
 ```
+-->
 
 Conclusion
 ----------
